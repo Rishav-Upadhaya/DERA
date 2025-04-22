@@ -1,0 +1,61 @@
+{% extends "users/layout.html" %} {% load static %} {% block body %}
+<link
+  rel="stylesheet"
+  href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<style>
+  #map {
+    height: 200px;
+    width: 500px;
+  }
+</style>
+<h1>Welcome to DERA!</h1>
+<p>DERA is a platform user can list and rent the property.</p>
+
+{% if request.user.is_authenticated %}
+<p>
+  <a href="{% url 'user_view' request.user %}">Home</a> |{{ request.user }} |
+  <a href="{% url 'logout' %}"> Logout </a>
+</p>
+
+{% else %}
+<a href="{% url 'login' %}"> Sign In </a>
+
+{% endif %}
+<br />
+
+{% comment %} {% if request.user.is_authenticated %}
+<a href="{% url 'addProperty' %}">Create Property</a>
+{% endif %}
+<p>Property List</p>
+{% for property in property_data %}
+
+<img
+  src="{{property.property_img.url}}"
+  alt="{{property.property_img.url}}"
+  style="width: 300px; height: 220px; object-fit: cover"
+/>
+<br />
+{{property.description}}
+<br />
+{{property.price}}
+<br />
+Owned by : {{ property.owner }} {% endfor %}
+
+<h2>Leaflet.js Map Example</h2>
+<div id="map"></div>
+
+<script>
+  var map = L.map("map").setView([27.7172, 85.324], 10); // Kathmandu
+
+  L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+    attribution: "© OpenStreetMap contributors",
+  }).addTo(map);
+
+  L.marker([27.7172, 85.324])
+    .addTo(map)
+    .bindPopup("Kathmandu, Nepal")
+    .openPopup();
+</script>
+{% endcomment %} {% endblock %}

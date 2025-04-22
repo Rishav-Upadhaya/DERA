@@ -1,0 +1,150 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{% block title %}{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'assets/css/rent_gallery.css' %}" />
+    <link rel="stylesheet" href="{% static 'assets/css/style.css' %}" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
+      integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script
+      src="https://kit.fontawesome.com/5d6c14bde1.js"
+      crossorigin="anonymous"
+    ></script>
+  </head>
+  <script>
+    function toggleNavbar() {
+      const navbar = document.querySelector(".vertical_navbar");
+      navbar.classList.toggle("collapsed");
+    }
+
+    // Toggle full-screen map view
+    function toggleFullScreenMap() {
+      const mapContainer = document.getElementById("map-container");
+      mapContainer.classList.toggle("fullscreen");
+    }
+
+    function toggleFav(elem, id) {
+      // Check if the clicked element has the regular (empty) heart class
+      if (elem.classList.contains("fa-regular")) {
+        // elem.classList.remove("fa-regular");
+        // elem.classList.add("fa-solid");
+
+        // Construct the dynamic URL
+        const url = `property/favourite/${id}`;
+
+        // Navigate to the new URL
+        window.location.href = url;
+
+        // Optionally, display a message to the user
+        //alert("Added to Favourites");
+      } else {
+        // Construct the dynamic URL
+        const url = `property/favourite/${id}`;
+
+        // Navigate to the new URL
+        window.location.href = url;
+        // elem.classList.remove("fa-solid");
+        // elem.classList.add("fa-regular");
+
+        // Handle the unfavourite action if needed
+        // For example, navigate to an unfavourite URL or make an AJAX request
+        // const url = `/unfavourite/${id}`;
+        // window.location.href = url;
+
+        // Optionally, display a message to the user
+        //alert("Removed from Favourites");
+      }
+    }
+
+    // In users/layout.html or within a <script> tag
+    function openModal(roomId) {
+      const modal = document.getElementById(`bookRequestModal-${roomId}`);
+      modal.style.display = "flex";
+    }
+
+    function closeModal(roomId) {
+      const modal = document.getElementById(`bookRequestModal-${roomId}`);
+      modal.style.display = "none";
+    }
+
+    // Optional: Close modal when clicking outside
+    window.onclick = function (event) {
+      if (event.target.classList.contains("modal")) {
+        event.target.style.display = "none";
+      }
+    };
+
+    // Send the book request
+    function sendBookRequest(event) {
+      event.preventDefault(); // Prevent default form submission
+      const message = event.target.requestMessage.value.trim();
+
+      if (!message) {
+        alert("Please enter a message.");
+        return false;
+      }
+
+      // Submit the form programmatically
+      event.target.submit();
+      closeModal(/* Pass roomId if needed */);
+      return false;
+    }
+
+    // Handle message thread clicks
+    document.querySelectorAll(".message-thread").forEach((thread) => {
+      thread.addEventListener("click", () => {
+        document
+          .querySelectorAll(".message-thread")
+          .forEach((t) => t.classList.remove("active"));
+        thread.classList.add("active");
+        // Add logic to load specific chat here
+      });
+    });
+
+    // Handle send message
+    document
+      .querySelector(".send-button")
+      .addEventListener("click", sendMessage);
+    document
+      .querySelector(".message-input input")
+      .addEventListener("keypress", (e) => {
+        if (e.key === "Enter") {
+          sendMessage();
+        }
+      });
+
+    function sendMessage() {
+      const input = document.querySelector(".message-input input");
+      const message = input.value.trim();
+      if (message) {
+        // Add logic to send message
+        const chatMessages = document.querySelector(".chat-messages");
+        const newMessage = document.createElement("div");
+        newMessage.className = "message outgoing";
+        newMessage.innerHTML = `
+      <p>${message}</p>
+      <span class="timestamp">Just now</span>
+    `;
+        chatMessages.appendChild(newMessage);
+        input.value = "";
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+      }
+    }
+  </script>
+  <body>
+    {% block body %} {% endblock %}
+  </body>
+</html>

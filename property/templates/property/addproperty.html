@@ -1,0 +1,161 @@
+{% extends 'property/layout.html' %} {% block body %}
+<style>
+  .add-property-container {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #f7f4f0;
+    padding: 20px;
+  }
+
+  .form-wrapper {
+    background-color: #ffffff;
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    padding: 40px;
+    width: 600px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  }
+
+  .form-title {
+    color: #8b4513;
+    margin-bottom: 30px;
+    text-align: center;
+    font-size: 28px;
+    font-weight: bold;
+  }
+
+  .form-group {
+    margin-bottom: 25px;
+    position: relative;
+  }
+
+  .form-group p {
+    margin-bottom: 20px;
+  }
+
+  .form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #555;
+  }
+
+  .form-group input,
+  .form-group textarea,
+  .form-group select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 16px;
+  }
+
+  .form-group input:focus,
+  .form-group textarea:focus,
+  .form-group select:focus {
+    outline: none;
+    border-color: #8b4513;
+    box-shadow: 0 0 0 2px rgba(139, 69, 19, 0.1);
+  }
+
+  .form-group input[type="number"] {
+    padding-left: 30px;
+  }
+
+  .price-wrapper {
+    position: relative;
+  }
+
+  .price-wrapper::before {
+    content: "₹";
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #666;
+  }
+
+  .form-group .errorlist {
+    color: #dc3545;
+    font-size: 14px;
+    margin-top: 5px;
+    list-style: none;
+    padding: 0;
+  }
+
+  .field-icon {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #666;
+  }
+
+  .help-text {
+    font-size: 13px;
+    color: #666;
+    margin-top: 5px;
+  }
+
+  .submit-btn {
+    background-color: #8b4513;
+    color: #fff;
+    padding: 12px 30px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 600;
+    width: 100%;
+    transition: background-color 0.3s ease;
+  }
+
+  .submit-btn:hover {
+    background-color: #6b340f;
+  }
+
+  .back-link {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    color: #8b4513;
+    text-decoration: none;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 10px 15px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s;
+  }
+
+  .back-link:hover {
+    transform: translateX(-3px);
+  }
+</style>
+
+<a href="{% url 'user_view' request.user.username %}" class="back-link">
+  <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+    <path
+      d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"
+    />
+  </svg>
+  Back to Home
+</a>
+
+<div class="add-property-container">
+  <div class="form-wrapper">
+    <h2 class="form-title">Add Property</h2>
+
+    <form action="" method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+      <div class="form-group">{{ form.as_p }}</div>
+      <button type="submit" class="submit-btn">Add Property</button>
+    </form>
+  </div>
+</div>
+{% endblock %}

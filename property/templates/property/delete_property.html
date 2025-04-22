@@ -1,0 +1,131 @@
+{% extends "users/layout.html" %}
+
+{% block title %}Delete Property{% endblock %}
+
+{% block body %}
+<style>
+    .delete-container {
+        max-width: 600px;
+        margin: 50px auto;
+        padding: 30px;
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        transform: translateY(0);
+        transition: all 0.3s ease;
+    }
+    
+    .delete-container:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .property-info {
+        text-align: center;
+        margin-bottom: 30px;
+    }
+
+    .property-title {
+        color: #333;
+        font-size: 24px;
+        margin-bottom: 15px;
+    }
+
+    .warning-text {
+        color: #dc3545;
+        font-size: 16px;
+        margin-bottom: 25px;
+    }
+
+    .button-group {
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+    }
+
+    .btn-danger {
+        background-color: #dc3545;
+        border: none;
+        padding: 12px 25px;
+        transition: all 0.3s ease;
+    }
+
+    .btn-danger:hover {
+        background-color: #c82333;
+        transform: scale(1.05);
+    }
+
+    .btn-secondary {
+        background-color: #6c757d;
+        border: none;
+        padding: 12px 25px;
+        transition: all 0.3s ease;
+    }
+
+    .btn-secondary:hover {
+        background-color: #5a6268;
+        transform: scale(1.05);
+    }
+
+    .loading-spinner {
+        display: none;
+        margin-left: 8px;
+        animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+
+    .fade-out {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+</style>
+
+<div class="delete-container" id="deleteContainer">
+    <div class="property-info">
+        <h3 class="property-title">Delete "{{ object.title }}"</h3>
+        <p class="warning-text">
+            <i class="fas fa-exclamation-triangle"></i>
+            This action cannot be undone. The property will be permanently deleted.
+        </p>
+    </div>
+    <form method="post" id="deleteForm" onsubmit="return handleDelete(event)">
+        {% csrf_token %}
+        <div class="button-group">
+            <button type="submit" class="btn btn-danger">
+                <i class="fas fa-trash"></i> Delete
+                <span class="loading-spinner">
+                    <i class="fas fa-spinner"></i>
+                </span>
+            </button>
+            <a href="{% url 'user_view' request.user.username %}" class="btn btn-secondary">
+                <i class="fas fa-times"></i> Cancel
+            </a>
+        </div>
+    </form>
+</div>
+
+<script>
+function handleDelete(event) {
+    const container = document.getElementById('deleteContainer');
+    const spinner = document.querySelector('.loading-spinner');
+    const form = document.getElementById('deleteForm');
+    
+    // Show loading spinner
+    spinner.style.display = 'inline-block';
+    
+    // Disable buttons
+    form.querySelectorAll('button, a').forEach(el => el.disabled = true);
+    
+    // Add fade-out animation
+    setTimeout(() => {
+        container.classList.add('fade-out');
+    }, 200);
+    
+    return true;
+}
+</script>
+{% endblock %}

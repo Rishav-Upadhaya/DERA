@@ -1,0 +1,317 @@
+{% extends 'property/layout.html' %} {% load static %} {% block title %} Book
+Requests {% endblock %} {% block body %}
+<style>
+  #room_card {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    padding: 10px;
+    cursor: pointer;
+  }
+
+  .room_card {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 300px));
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 15px;
+    transition: transform 0.3s, box-shadow 0.3s;
+  }
+
+  .room_card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  }
+  .room_card img {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 10px;
+  }
+
+  .room_card h3 {
+    font-size: 18px;
+    margin: 10px 0;
+    color: #333;
+  }
+
+  .room_card b {
+    font-size: 14px;
+    color: #555;
+  }
+
+  .room_card p {
+    font-size: 14px;
+    color: #777;
+    margin: 5px 0;
+  }
+
+  .main-content {
+    padding: 10px 20px;
+  }
+  .room_foot button {
+    width: 110px;
+    align-items: center;
+    justify-content: center;
+  }
+  .accept-btn,
+  .reject-btn {
+    padding: 8px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+
+  .accept-btn {
+    background-color: #007bff;
+    color: white;
+  }
+
+  .accept-btn:disabled {
+    background-color: #4caf50;
+    cursor: not-allowed;
+  }
+
+  .reject-btn {
+    background-color: #dc3545;
+    color: white;
+  }
+
+  .status-accepted {
+    background-color: #4caf50;
+    color: white;
+    padding: 8px 15px;
+    border-radius: 5px;
+    text-align: center;
+    width: 100%;
+  }
+
+  .status-rejected {
+    background-color: #dc3545;
+    color: white;
+    padding: 8px 15px;
+    border-radius: 5px;
+    text-align: center;
+    width: 100%;
+  }
+
+  .accept-btn,
+  .reject-btn {
+    padding: 8px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    margin: 0 5px;
+  }
+
+  .no-requests {
+    width: 100%;
+    text-align: center;
+    padding: 20px;
+    background-color: #f8f9fa;
+    border-radius: 10px;
+    margin: 20px 0;
+  }
+
+  .no-requests p {
+    color: #6c757d;
+    font-size: 16px;
+    margin: 0;
+  }
+
+  textarea {
+    width: 100%;
+    min-height: 80px;
+    margin: 10px 0;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    resize: vertical;
+    background-color: #f8f9fa;
+  }
+
+  .room_foot {
+    margin-top: 15px;
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+  }
+</style>
+<!-- Navbar -->
+<div class="navbar">
+  <div id="menu" onclick="toggleNavbar()">
+    <i class="fa-solid fa-bars"></i>
+  </div>
+  <h1>ＤΞＲΛ</h1>
+  <div class="userarea">
+    <div class="userimg">
+      <img
+        src="{% static 'assets/img/userIcon.jpg' %}"
+        alt="user"
+        class="userimg"
+      />
+    </div>
+    <div class="usernav">
+      {% if request.user.is_authenticated %}
+      <p>{{ request.user }}</p>
+      <a
+        href="{% url 'userdashboard' request.user.id %}"
+        style="text-decoration: none"
+        ><p>My Account</p></a
+      >
+      {% else %}
+      <p>Sign In</p>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<main>
+  <div id="listings">
+    <!-- Sidebar / Vertical Navbar -->
+    <div class="vertical_navbar collapsed">
+      <a href="{% url 'user_view' request.user.username %}">
+        <i class="fa-solid fa-house"></i>
+        <p>Home</p>
+      </a>
+      <a href="{% url 'bookRequest' request.user.id %}" class="selected">
+        <i class="fa-solid fa-user-plus"></i>
+        <p>Book Request</p>
+      </a>
+      <a href="">
+        <i class="fa-solid fa-bell"></i>
+        <p>Notifications</p>
+      </a>
+      <a href="{% url 'message' %}">
+        <i class="fa-solid fa-message"></i>
+        <p>Message</p>
+      </a>
+      <a href="{% url 'userprop' request.user.username %}">
+        <i class="fa-solid fa-map"></i>
+        <p>Your Favourites</p>
+      </a>
+      <a href="{% url 'logout' %}">
+        <i class="fa-solid fa-arrow-right-from-bracket"></i>
+        <p>Logout</p>
+      </a>
+    </div>
+
+    <!-- Main Content Area -->
+    <div class="main-content">
+      <h1>Book requests</h1>
+      <section id="room_card">
+        {% for message in messages %}
+        <div class="room_card">
+          <a
+            href="{% url 'viewproperty' message.properid.id %}"
+            style="text-decoration: none"
+          >
+            <img src="{{ message.properid.property_img.url }}" />
+            <h3>Rs. {{ message.properid.price }}</h3>
+            <b style="text-transform: uppercase"
+              >{{ message.properid.description }}</b
+            >
+            <p id="location">
+              <i class="fa-solid fa-location-dot"></i> {{
+              message.properid.location }}
+            </p>
+            <p>Book Requested by: {{ message.booker }}</p>
+            <p>
+              Message: <br />
+              <textarea disabled>{{ message.message }}</textarea>
+            </p>
+            <div class="room_foot" id="buttons-{{ message.id }}">
+              {% csrf_token %} {% if message.status == 'accepted' %}
+              <div class="status-accepted">Request Accepted</div>
+              {% elif message.status == 'rejected' %}
+              <div class="status-rejected">Request Rejected</div>
+              {% else %}
+              <button
+                onclick="acceptRequest('{{ message.id }}')"
+                id="accept-btn-{{ message.id }}"
+                class="accept-btn"
+              >
+                <p>Accept</p>
+              </button>
+              <button
+                onclick="rejectRequest('{{ message.id }}')"
+                id="reject-btn-{{ message.id }}"
+                class="reject-btn"
+              >
+                <p>Reject</p>
+              </button>
+              {% endif %}
+            </div>
+          </a>
+        </div>
+        {% empty %}
+        <div class="no-requests">
+          <p>No book requests available.</p>
+        </div>
+        {% endfor %}
+      </section>
+    </div>
+  </div>
+</main>
+
+<script>
+  function acceptRequest(messageId) {
+    handleRequest(messageId, "accepted");
+  }
+
+  function rejectRequest(messageId) {
+    handleRequest(messageId, "rejected");
+  }
+
+  function handleRequest(messageId, status) {
+    const csrfToken = document.querySelector(
+      "[name=csrfmiddlewaretoken]"
+    ).value;
+    console.log(`${status} request for message ID:`, messageId);
+
+    fetch(`/property/bookreqstatus/${messageId}/${status}/`, {
+      method: "POST",
+      headers: {
+        "X-CSRFToken": csrfToken,
+        "Content-Type": "application/json",
+      },
+      credentials: "same-origin",
+    })
+      .then((response) => {
+        console.log("Response status:", response.status);
+        if (response.ok) {
+          // Replace buttons with status message
+          const buttonContainer = document.getElementById(
+            `buttons-${messageId}`
+          );
+          const statusClass =
+            status === "accepted" ? "status-accepted" : "status-rejected";
+          const statusText =
+            status === "accepted" ? "Request Accepted" : "Request Rejected";
+          buttonContainer.innerHTML = `<div class="${statusClass}">${statusText}</div>`;
+
+          // Redirect to message page after a short delay
+          setTimeout(() => {
+            window.location.href = "{% url 'message' %}";
+          }, 1000);
+        } else {
+          console.error(`Error ${status} request:`, response.status);
+          response.text().then((text) => {
+            console.error("Error response:", text);
+            alert(
+              `Error ${status} request. Please try again. Status: ` +
+                response.status
+            );
+          });
+        }
+      })
+      .catch((error) => {
+        console.error("Network Error:", error);
+        alert(`Network error while ${status} request. Please try again.`);
+      });
+  }
+</script>
+{% endblock %}

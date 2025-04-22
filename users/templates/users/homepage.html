@@ -1,0 +1,108 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ＤΞＲΛ</title>
+    <!-- Font Awesome for icons (ensure you replace YOUR_KIT_CODE with your actual kit code) -->
+    <script
+      src="https://kit.fontawesome.com/YOUR_KIT_CODE.js"
+      crossorigin="anonymous"
+    ></script>
+    <!-- Link to CSS -->
+    <link rel="stylesheet" href="{% static 'assets/css/landing.css' %}" />
+    <!-- Optionally include any JS libraries here -->
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        // Optionally, add further interactive behaviors here
+        const searchForm = document.querySelector(".search-form");
+        searchForm.addEventListener("submit", (e) => {
+          e.preventDefault();
+          const query = document.querySelector("#search-input").value;
+          alert(`Searching for: ${query}`);
+          // Add AJAX call or redirection logic here if needed
+        });
+      });
+    </script>
+  </head>
+  <body>
+    <!-- Navigation Bar -->
+    <header class="navbar">
+      <div class="container">
+        <div class="logo">
+          <h1>ＤΞＲΛ</h1>
+        </div>
+        <nav class="nav-links">
+          {% if request.user.is_authenticated %}
+          <a href="{% url 'user_view' request.user %}">Home</a>
+          <a href="#">Buy</a>
+          <a href="#">Rent</a>
+          <a href="#">Sell</a>
+          <a href="#">Mortgage</a>
+          {% comment %} |{{ request.user }} | {% endcomment %}
+          <a href="{% url 'logout' %}"> Logout </a>
+
+          {% else %}
+          <a href="{% url 'login'%}">Home</a>
+          <a href="#">Buy</a>
+          <a href="#">Rent</a>
+          <a href="#">Sell</a>
+          <a href="#">Mortgage</a>
+          <a href="{% url 'login' %}"> Sign In </a>
+
+          {% endif %}
+        </nav>
+      </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+      <div class="hero-overlay"></div>
+      <div class="hero-content">
+        <h2>Find Your Dream Home</h2>
+        <p>Search thousands of listings in one place</p>
+        <form class="search-form">
+          <input type="text" placeholder="Enter address, city, or zip" />
+          <button type="submit">
+            <i class="fa-solid fa-magnifying-glass"></i> Search
+          </button>
+        </form>
+      </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features">
+      <div class="container features-grid">
+        <div class="feature-card">
+          <i class="fa-solid fa-house-chimney"></i>
+          <h3>Buy a Home</h3>
+          <img src="{% static "assets/img/house3.jpg" %}" alt="">
+          <p>Discover a wide range of Favourites for sale.</p>
+          <button>Buy a Home</button>
+        </div>
+        <div class="feature-card">
+          <i class="fa-solid fa-key"></i>
+          <h3>Rent a Home</h3>
+          <img src="{% static "assets/img/House2.jpg" %}" alt="">
+          <p>Find apartments, condos, and houses for rent.</p>
+          <button>Rent a Home</button>
+        </div>
+        <div class="feature-card">
+          <i class="fa-solid fa-sack-dollar"></i>
+          <h3>Sell Your Home</h3>
+          <img src="{% static "assets/img/house1.jpg" %}" alt="">
+          <p>List your property and reach millions of buyers.</p>
+          <button>Sell your Home</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+      <div class="container">
+        <p>&copy; 2025 Sequel Tech Inc. All rights reserved.</p>
+      </div>
+    </footer>
+  </body>
+</html>

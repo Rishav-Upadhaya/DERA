@@ -1,0 +1,193 @@
+/* Basic Reset & Global Styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+body {
+  font-family: "Roboto", sans-serif;
+  background-color: #f4f4f4;
+  color: #333;
+  line-height: 1.6;
+}
+
+/* Container */
+.container {
+  width: 90%;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Navbar */
+.navbar {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  background: #fff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  z-index: 100;
+}
+.navbar .container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 0;
+}
+.logo h1 {
+  font-size: 1.8rem;
+  color: #000000; /* Primary blue */
+}
+.nav-links a {
+  margin-left: 2rem;
+  font-size: 1rem;
+  color: #333;
+  text-decoration: none;
+  transition: color 0.3s;
+}
+.nav-links a:hover {
+  color: #2720ea; /* Accent red */
+}
+
+/* Hero Section */
+.hero {
+  position: relative;
+  height: 100vh;
+  background: url("newhouse.jpg") center/cover no-repeat;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+.hero-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  background-color: rgba(0, 0, 0, 0.4);
+}
+.hero-content {
+  position: relative;
+  color: #fff;
+  z-index: 1;
+  max-width: 600px;
+  padding: 1rem;
+}
+.hero-content h2 {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+}
+.hero-content p {
+  font-size: 1.25rem;
+  margin-bottom: 2rem;
+}
+.search-form {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+}
+.search-form input[type="text"] {
+  padding: 0.75rem 1rem;
+  width: 70%;
+  border: none;
+  border-radius: 4px;
+  font-size: 1rem;
+}
+.search-form button {
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 4px;
+  background-color: #0652dd;
+  color: #fff;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+.search-form button:hover {
+  background-color: #0548b4;
+}
+
+/* Features Section */
+.features {
+  padding: 4rem 0;
+  background-color: #fff;
+}
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+  text-align: center;
+}
+.feature-card {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 1.5rem;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+.feature-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+.feature-card i {
+  font-size: 2.5rem;
+  color: #0652dd;
+  margin-bottom: 1rem;
+}
+.feature-card h3 {
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+  color: #333;
+}
+.feature-card p {
+  font-size: 0.98rem;
+  color: #555;
+}
+
+.feature-card img {
+  width: 300px;
+  height: 400px;
+  object-fit: cover;
+}
+.feature-card button {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 16px;
+  background-color: #007bff;
+  color: #fff;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.feature-card button:hover {
+  background-color: #0056b3;
+}
+/* Footer */
+footer {
+  background-color: #000000;
+  color: #fff;
+  padding: 1.5rem 0;
+  text-align: center;
+  margin-top: 2rem;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .nav-links a {
+    margin-left: 1rem;
+    font-size: 0.9rem;
+  }
+  .hero-content h2 {
+    font-size: 2.5rem;
+  }
+  .hero-content p {
+    font-size: 1rem;
+  }
+  .search-form input[type="text"] {
+    width: 60%;
+  }
+}

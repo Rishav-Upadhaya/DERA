@@ -1,0 +1,279 @@
+{% extends 'property/layout.html' %} {% load static %} {% block title %}
+Favourites {% endblock %} {% block body %}
+<style>
+  #room_card {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    padding: 10px;
+    cursor: pointer;
+  }
+
+  .room_card {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 15px;
+    transition: transform 0.3s, box-shadow 0.3s;
+  }
+
+  .room_card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  }
+  .room_card img {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 10px;
+  }
+
+  .room_card h3 {
+    font-size: 18px;
+    margin: 10px 0;
+    color: #333;
+  }
+
+  .room_card b {
+    font-size: 14px;
+    color: #555;
+  }
+
+  .room_card p {
+    font-size: 14px;
+    color: #777;
+    margin: 5px 0;
+  }
+
+  .main-content {
+    padding: 10px 20px;
+  }
+</style>
+<!-- Navbar -->
+<div class="navbar">
+  <div id="menu" onclick="toggleNavbar()">
+    <i class="fa-solid fa-bars"></i>
+  </div>
+  <h1>ＤΞＲΛ</h1>
+  <div class="userarea">
+    <div class="userimg">
+      <img
+        src="{% static 'assets/img/userIcon.jpg' %}"
+        alt="user"
+        class="userimg"
+      />
+    </div>
+    <div class="usernav">
+      {% if request.user.is_authenticated %}
+      <p>{{ request.user }}</p>
+      <a
+        href="{% url 'userdashboard' request.user.id %}"
+        style="text-decoration: none"
+        ><p>My Account</p></a
+      >
+      {% else %}
+      <p>Sign In</p>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<main>
+  <div id="listings">
+    <!-- Sidebar / Vertical Navbar -->
+    <div class="vertical_navbar collapsed">
+      <a href="{% url 'user_view' request.user.username %}">
+        <i class="fa-solid fa-house"></i>
+        <p>Home</p>
+      </a>
+      <a href="">
+        <i class="fa-solid fa-user-plus"></i>
+        <p>Book Request</p>
+      </a>
+      <a href="">
+        <i class="fa-solid fa-bell"></i>
+        <p>Notifications</p>
+      </a>
+      <a href="{% url 'message' %}">
+        <i class="fa-solid fa-message"></i>
+        <p>Message</p>
+      </a>
+      <a href="{% url 'userprop' request.user.username %}" class="selected">
+        <i class="fa-solid fa-map"></i>
+        <p>Your Favourites</p>
+      </a>
+      <a href="{% url 'logout' %}">
+        <i class="fa-solid fa-arrow-right-from-bracket"></i>
+        <p>Logout</p>
+      </a>
+    </div>
+    <div class="main-content">
+      <!-- <a href="{% url 'user_view' request.user.username %}"><- Back to Home</a> -->
+      <h1>Your Favourites</h1>
+      <br />
+      <div id="room_card">
+        {% for i in properties %}
+        <div class="room_card">
+          <a href="{% url 'viewproperty' i.id %}" style="text-decoration: none">
+            <img src="{{ i.property_img.url }}" />
+            <h3>Rs. {{ i.price }}</h3>
+            <b style="text-transform: uppercase">{{ i.description }}</b>
+            <p id="location">
+              <i class="fa-solid fa-location-dot"></i> {{ i.location }}
+            </p>
+            <p>Owned by: {{ i.owner }}</p>
+          </a>
+          <div class="room_foot">
+            <a href="#" style="text-decoration: none" class="book_req">
+              <button onclick="openModal('{{ i.id }}')">
+                <p>Send a Book Request</p>
+                <i class="fa-solid fa-arrow-right"></i>
+              </button>
+            </a>
+            <i
+              id="fav-btn-{{ i.id }}"
+              class="{% if i.id in favdata %}fa-solid{% else %}fa-regular{% endif %} fa-heart"
+              onclick="toggleFav(this, {{ i.id }})"
+            ></i>
+          </div>
+        </div>
+        <!-- Modal for Book Request -->
+        <div id="bookRequestModal-{{ i.id }}" class="modal">
+          <div class="modal-content">
+            <span class="close-modal" onclick="closeModal('{{ i.id }}')"
+              >&times;</span
+            >
+            <form
+              action="{% url 'book_req' i.id %}"
+              method="post"
+              onsubmit="return sendBookRequest(event)"
+            >
+              {% csrf_token %}
+              <h2>Send a Book Request</h2>
+              <textarea
+                id="requestMessage"
+                name="requestMessage"
+                placeholder="Enter your message here..."
+                rows="5"
+              ></textarea>
+              <button type="submit">Send Request</button>
+            </form>
+          </div>
+        </div>
+        {% empty %}
+        <li>You have no Favourites</li>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</main>
+<script>
+  function toggleFav(elem, id) {
+    // Check if the clicked element has the regular (empty) heart class
+    if (elem.classList.contains("fa-regular")) {
+      // elem.classList.remove("fa-regular");
+      // elem.classList.add("fa-solid");
+
+      // Construct the dynamic URL
+      const url = `property/favourite/${id}`;
+
+      // Navigate to the new URL
+      window.location.href = url;
+
+      // Optionally, display a message to the user
+      alert("Added to Favourites");
+    } else {
+      // Construct the dynamic URL
+      const url = `favourite/${id}`;
+
+      // Navigate to the new URL
+      window.location.href = url;
+      // elem.classList.remove("fa-solid");
+      // elem.classList.add("fa-regular");
+
+      // Handle the unfavourite action if needed
+      // For example, navigate to an unfavourite URL or make an AJAX request
+      // const url = `/unfavourite/${id}`;
+      // window.location.href = url;
+
+      // Optionally, display a message to the user
+      alert("Removed from Favourites");
+    }
+  }
+
+  // In users/layout.html or within a <script> tag
+  function openModal(roomId) {
+    const modal = document.getElementById(`bookRequestModal-${roomId}`);
+    modal.style.display = "flex";
+  }
+
+  function closeModal(roomId) {
+    const modal = document.getElementById(`bookRequestModal-${roomId}`);
+    modal.style.display = "none";
+  }
+
+  // Optional: Close modal when clicking outside
+  window.onclick = function (event) {
+    if (event.target.classList.contains("modal")) {
+      event.target.style.display = "none";
+    }
+  };
+
+  // Send the book request
+  function sendBookRequest(event) {
+    event.preventDefault(); // Prevent default form submission
+    const message = event.target.requestMessage.value.trim();
+
+    if (!message) {
+      alert("Please enter a message.");
+      return false;
+    }
+
+    // Submit the form programmatically
+    event.target.submit();
+    closeModal(/* Pass roomId if needed */);
+    return false;
+  }
+
+  // Handle message thread clicks
+  document.querySelectorAll(".message-thread").forEach((thread) => {
+    thread.addEventListener("click", () => {
+      document
+        .querySelectorAll(".message-thread")
+        .forEach((t) => t.classList.remove("active"));
+      thread.classList.add("active");
+      // Add logic to load specific chat here
+    });
+  });
+
+  // Handle send message
+  document.querySelector(".send-button").addEventListener("click", sendMessage);
+  document
+    .querySelector(".message-input input")
+    .addEventListener("keypress", (e) => {
+      if (e.key === "Enter") {
+        sendMessage();
+      }
+    });
+
+  function sendMessage() {
+    const input = document.querySelector(".message-input input");
+    const message = input.value.trim();
+    if (message) {
+      // Add logic to send message
+      const chatMessages = document.querySelector(".chat-messages");
+      const newMessage = document.createElement("div");
+      newMessage.className = "message outgoing";
+      newMessage.innerHTML = `
+    <p>${message}</p>
+    <span class="timestamp">Just now</span>
+  `;
+      chatMessages.appendChild(newMessage);
+      input.value = "";
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+  }
+</script>
+{% endblock %}

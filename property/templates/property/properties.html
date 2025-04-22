@@ -1,0 +1,431 @@
+{% extends 'property/layout.html' %} {% load static %} {% block body %}
+<style>
+  /* Global Reset */
+  html, body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Inter', sans-serif;
+    background: #f8fafc;
+    color: #1e293b;
+    line-height: 1.6;
+  }
+
+  /* Header Styling */
+  .header {
+    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+    padding: 20px 40px;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .back-button {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #fff;
+    text-decoration: none;
+    font-size: 16px;
+    padding: 10px 20px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(5px);
+  }
+
+  .back-button:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: translateY(-2px);
+  }
+
+  .back-button svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  /* Property Container */
+  .property-container {
+    max-width: 1400px;
+    margin: 40px auto;
+    background: #fff;
+    border-radius: 20px;
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+    overflow: hidden;
+  }
+
+  .property-header {
+    height: 500px;
+    position: relative;
+  }
+
+  .property-header img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+  }
+
+  .property-header::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 200px;
+    background: linear-gradient(to top, rgba(0,0,0,0.5) 0%, transparent 100%);
+  }
+
+  .property-content {
+    display: grid;
+    grid-template-columns: 1.2fr 0.8fr;
+    gap: 40px;
+    padding: 40px;
+  }
+
+  /* Property Details */
+  .property-info {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin: 20px 0;
+  }
+
+  .property-badge {
+    background: #f1f5f9;
+    padding: 8px 16px;
+    border-radius: 30px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #475569;
+  }
+
+  .property-badge.owner {
+    background: #ecfdf5;
+    color: #059669;
+  }
+
+  .description-box {
+    background: #f8fafc;
+    padding: 24px;
+    border-radius: 16px;
+    margin: 24px 0;
+    border: 1px solid #e2e8f0;
+  }
+
+  /* Action Buttons */
+  .action-buttons {
+    display: flex;
+    gap: 16px;
+    margin: 24px 0;
+  }
+
+  .delete-btn, .edit-btn {
+    padding: 12px 24px;
+    border-radius: 12px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+  }
+
+  .delete-btn {
+    background: #fef2f2;
+    color: #dc2626;
+  }
+
+  .edit-btn {
+    background: #eff6ff;
+    color: #2563eb;
+  }
+
+  /* Price Tag */
+  .price-tag {
+    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+    padding: 16px 32px;
+    border-radius: 16px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin: 24px 0;
+  }
+
+  /* Map Container */
+  .map-container {
+    border-radius: 16px;
+    overflow: hidden;
+    height: 100%;
+    min-height: 400px;
+    border: 1px solid #e2e8f0;
+  }
+
+  /* Recommended Section */
+  .recommended-rooms {
+    max-width: 1400px;
+    margin: 60px auto;
+    padding: 0 40px;
+  }
+
+  .room-card {
+    background: #fff;
+    border-radius: 16px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    border: 1px solid #e2e8f0;
+  }
+
+  .room-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1);
+  }
+
+  .room-card img {
+    height: 200px;
+    object-fit: cover;
+  }
+
+  .room-card-content {
+    padding: 20px;
+  }
+
+  /* Room Footer Styling */
+  .room_foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 24px;
+    padding: 16px;
+    background: #f8fafc;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+  }
+
+  .book_req button {
+    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .book_req button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+  }
+
+  .book_req button p {
+    margin: 0;
+  }
+
+  .book_req button i {
+    font-size: 18px;
+    transition: transform 0.3s ease;
+  }
+
+  .book_req button:hover i {
+    transform: translateX(4px);
+  }
+
+  .fa-heart {
+    font-size: 24px;
+    color: #ef4444;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .fa-heart:hover {
+    transform: scale(1.2);
+  }
+
+  .fa-solid.fa-heart {
+    animation: heartBeat 0.3s ease-in-out;
+  }
+
+  @keyframes heartBeat {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.3); }
+    100% { transform: scale(1); }
+  }
+
+  /* Responsive Design */
+  @media (max-width: 1024px) {
+    .property-content {
+      grid-template-columns: 1fr;
+    }
+    
+    .property-header {
+      height: 400px;
+    }
+    
+    .map-container {
+      min-height: 300px;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .property-container {
+      margin: 20px;
+    }
+    
+    .property-content {
+      padding: 20px;
+    }
+    
+    .recommended-rooms {
+      padding: 0 20px;
+    }
+  }
+</style>
+
+<!-- Font Import -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<!-- Header -->
+<div class="header">
+  <a href="{% url 'user_view' request.user.username %}" class="back-button">
+    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+    </svg>
+    Back to Home
+  </a>
+  <h2>Property Details</h2>
+</div>
+
+<!-- Property Container -->
+<div class="property-container">
+  <div class="property-header">
+    <a href="{{ prop.property_img.url }}" target="_blank">
+      <img src="{{ prop.property_img.url }}" alt="Property Image" />
+    </a>
+  </div>
+  <div class="property-content">
+    <div class="property-details">
+      <h1 id="property-location">{{ prop.location.capitalize }}</h1>
+      <div class="property-info">
+        <span class="property-badge">ID: {{ prop.id }}</span>
+        <span class="property-badge owner">Owner: {{ prop.owner }}</span>
+      </div>
+      <div class="description-box">
+        <h3>Description</h3>
+        <p>{{ prop.description }}</p>
+      </div>
+      {% if request.user == prop.owner %}
+      <div class="action-buttons">
+        <a href="{% url 'delete' prop.id %}" class="delete-btn">Delete Property</a>
+        <a href="#" class="edit-btn">Edit Property</a>
+      </div>
+      {% endif %}
+      <div class="price-tag">
+        <span class="currency">₹</span>
+        <span class="amount">{{ prop.price }}</span>
+        <span class="period">/month</span>
+      </div>
+      <div class="room_foot">
+        <a href="#" class="book_req">
+          <button onclick="openModal('{{ prop.id }}')">
+            <p>Send a Book Request</p>
+            <i class="fa-solid fa-arrow-right"></i>
+          </button>
+        </a>
+        <i
+          id="fav-btn-{{ prop.id }}"
+          class="{% if prop.id in favdata %}fa-solid{% else %}fa-regular{% endif %} fa-heart"
+          onclick="toggleFav(this, {{ prop.id }})"
+        ></i>
+      </div>
+      <!-- Modal for Book Request -->
+      <div id="bookRequestModal-{{ prop.id }}" class="modal">
+        <div class="modal-content">
+          <span class="close-modal" onclick="closeModal('{{ prop.id }}')"
+            >&times;</span
+          >
+          <form
+            action="{% url 'book_req' prop.id %}"
+            method="post"
+            onsubmit="return sendBookRequest(event)"
+          >
+            {% csrf_token %}
+            <h2>Send a Book Request</h2>
+            <textarea
+              id="requestMessage"
+              name="requestMessage"
+              placeholder="Enter your message here..."
+              rows="5"
+            ></textarea>
+            <button type="submit">Send Request</button>
+          </form>
+        </div>
+      </div>
+    </div>
+    <div id="map" class="map-container"></div>
+  </div>
+</div>
+
+<!-- Recommended Rooms Section -->
+<div class="recommended-rooms">
+  <h2>Recommended Properties Nearby</h2>
+  <div class="room-card-container">
+    {% for room in recommended_rooms %}
+    <div class="room-card">
+      <img src="{{ room.property_img.url }}" alt="Room Image" />
+      <div class="room-card-content">
+        <h3>{{ room.location }}</h3>
+        <p>{{ room.description|truncatechars:100 }}</p>
+        <div class="price-tag">
+          <span class="currency">₹</span>
+          <span class="amount">{{ room.price }}</span>
+          <span class="period">/month</span>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+<!-- Leaflet Map Integration -->
+<link
+  rel="stylesheet"
+  href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const propertyLocation =
+      document.getElementById("property-location").textContent;
+
+    fetch(
+      `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(
+        propertyLocation
+      )}`
+    )
+      .then((response) => response.json())
+      .then((data) => {
+        if (data && data.length > 0) {
+          const lat = data[0].lat;
+          const lon = data[0].lon;
+          const map = L.map("map").setView([lat, lon], 12);
+
+          L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+            attribution: "© OpenStreetMap contributors",
+          }).addTo(map);
+
+          L.marker([lat, lon])
+            .addTo(map)
+            .bindPopup(propertyLocation)
+            .openPopup();
+        } else {
+          console.warn("No results found for location:", propertyLocation);
+        }
+      })
+      .catch((error) => console.error("Error fetching location data:", error));
+  });
+</script>
+{% endblock %}
